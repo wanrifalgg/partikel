@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Salju Bersih</title>
+    <title>Simulasi Salju Biru</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -51,7 +51,7 @@
                 // Kecepatan jatuh menyerupai hujan (lebih cepat dan dinamis)
                 this.vy = (this.radius * 0.8) + 3;
                 this.vx = (Math.random() * 1.5) - 0.75; // Sedikit efek angin horizontal
-                this.alpha = Math.random() * 0.6 + 0.2;
+                this.alpha = Math.random() * 0.6 + 0.3;
             }
 
             update() {
@@ -73,9 +73,10 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-                ctx.shadowBlur = this.radius * 2;
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                // Mengubah warna partikel menjadi biru dengan efek cahaya (glow) biru
+                ctx.fillStyle = `rgba(59, 130, 246, ${this.alpha})`;
+                ctx.shadowBlur = this.radius * 3;
+                ctx.shadowColor = 'rgba(59, 130, 246, 0.9)';
                 ctx.fill();
                 ctx.shadowBlur = 0; // Reset shadow untuk performa
             }
