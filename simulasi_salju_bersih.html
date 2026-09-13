@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Salju Bersih</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen relative bg-transparent">
+
+    <canvas id="snowCanvas" class="absolute inset-0 z-0"></canvas>
+
+    <script>
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Mengatur ukuran canvas agar full screen secara responsif
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let particles = [];
+        const particleCount = 350;
+
+        // Kelas Partikel Salju (Jatuh seperti hujan dengan sedikit goyangan angin)
+        class Snowflake {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.radius = Math.random() * 4 + 1;
+                // Kecepatan jatuh menyerupai hujan (lebih cepat dan dinamis)
+                this.vy = (this.radius * 0.8) + 3;
+                this.vx = (Math.random() * 1.5) - 0.75; // Sedikit efek angin horizontal
+                this.alpha = Math.random() * 0.6 + 0.2;
+            }
+
+            update() {
+                this.y += this.vy;
+                this.x += this.vx;
+
+                // Jika keluar dari layar bawah atau samping, reset ke atas
+                if (this.y > canvas.height + this.radius) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+                if (this.x > canvas.width + this.radius) {
+                    this.x = -this.radius;
+                } else if (this.x < -this.radius) {
+                    this.x = canvas.width + this.radius;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.shadowBlur = this.radius * 2;
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 0; // Reset shadow untuk performa
+            }
+        }
+
+        // Inisialisasi partikel salju
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Snowflake());
+            }
+        }
+        initParticles();
+
+        // Loop animasi utama
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
